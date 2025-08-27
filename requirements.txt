@@ -9,3 +9,5 @@ uvicorn
 pydantic
 matplotlib
 pytest
+gradio
+pathlib
