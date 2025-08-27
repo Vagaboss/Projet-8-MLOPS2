@@ -11,3 +11,4 @@ matplotlib
 pytest
 gradio
 pathlib
+docker
