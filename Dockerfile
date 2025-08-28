@@ -1,4 +1,4 @@
-# Dockerfile
+# Dockerfile (placé à la racine du projet)
 
 # 1. Image de base officielle
 FROM python:3.10-slim
@@ -7,7 +7,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # 3. Copier les fichiers nécessaires
-COPY api/ ./api/
+COPY api/app_gradio.py ./api/app_gradio.py
 COPY models/ ./models/
 COPY requirements.txt .
 
