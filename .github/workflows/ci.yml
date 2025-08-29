@@ -52,6 +52,14 @@ jobs:
         git fetch hf
         git pull hf main --rebase || echo "Aucun changement à fusionner"
 
+
+    - name: 🧑‍💻 Configurer Git avec le token HF
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        git remote set-url hf https://__token__:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/credit-scoring-app
+
+
     # 9. 🚀 Pousser le code vers Hugging Face (CD)
     - name: 🔄 Pousser le contenu vers Hugging Face
       run: |
