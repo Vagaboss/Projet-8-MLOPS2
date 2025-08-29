@@ -11,6 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    #0. chekout complet
+    - name: 🧪 Checkout complet du dépôt
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     # 1. 📥 Récupérer le code
     - name: Checkout repository
       uses: actions/checkout@v4
