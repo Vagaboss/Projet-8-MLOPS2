@@ -37,24 +37,30 @@ jobs:
       # 6. Configurer Git pour le push
       - name: ⚙️ Setup Git config
         run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "yourusername"
+          git config --global user.email "your@email.com"
+          git config --global user.name "Your Name"
           git remote add hf https://$HF_TOKEN@huggingface.co/spaces/yacineould/credit-scoring-app || true
 
-          # Récupérer les éventuelles modifs distantes sans écraser localement
-          git fetch hf main
+          # Sauvegarder les changements temporaires
+          git stash
 
-          # Fusionner (rebase) proprement s’il y a des différences
+          # Récupérer le contenu distant
+          git fetch hf main
           git pull hf main --rebase
 
-          # Ajouter les nouveaux fichiers (s’il y en a)
+          # Restaurer les changements locaux
+          git stash pop || true
+
+          # Ajouter les fichiers
           git add .
 
-          # Commit automatique si changement
-          git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Rien à commiter"
+          # Commit s’il y a quelque chose à committer
+          git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Rien à committer"
 
-          # Push final avec LFS
+          # Pousser les gros fichiers si besoin
           git lfs push hf main
+
+          # Pousser le code vers HF
           git push hf main
       
           
