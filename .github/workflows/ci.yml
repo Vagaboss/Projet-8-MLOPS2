@@ -30,22 +30,18 @@ jobs:
     - name: 🐳 Build Docker image
       run: docker build -t gradio-scoring-app .
 
-    - name: 🚀 Déploiement sur Hugging Face
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    - name: 📦 Déployer sur Hugging Face Spaces
       run: |
-        apt-get update && apt-get install -y git-lfs
-        git lfs install
-        huggingface-cli login --token $HF_TOKEN
+       git config --global user.email "your@email.com"
+       git config --global user.name "yourusername"
 
-        # Clone ou initie ton repo HF (si pas déjà fait manuellement)
-        git config --global user.email "you@example.com"
-        git config --global user.name "Your Name"
+       # Ajouter le remote HF (s’il n’existe pas)
+       git remote add hf https://huggingface.co/spaces/yacineould/credit-scoring-app || true
 
-        huggingface-cli repo clone yacineould/credit-scoring-app --type=space hf-space
-        cp -r api models requirements.txt Dockerfile hf-space/
+       # Authentifier avec le token (déjà défini dans les secrets)
+       echo "${{ secrets.HF_TOKEN }}" | huggingface-cli login --token
 
-        cd hf-space
-        git add .
-        git commit -m "🚀 Déploiement automatique via GitHub Actions"
-        git push
+       # Commit + push vers HF
+       git add .
+       git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Pas de changements à commit"
+       git push hf main
