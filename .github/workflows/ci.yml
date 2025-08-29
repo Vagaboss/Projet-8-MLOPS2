@@ -1,7 +1,9 @@
-name: 🚀 CI/CD - Build, Test & Deploy to HF Spaces
+name: 🧪 Tests & 🚀 Déploiement Hugging Face
 
 on:
   push:
+    branches: [main]
+  pull_request:
     branches: [main]
 
 jobs:
@@ -9,59 +11,43 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Récupérer le code source
-      - name: 📥 Checkout code
-        uses: actions/checkout@v3
+    # 1. 📥 Récupérer le code
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      # 2. Installer Python
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
+    # 2. 🐍 Installer Python et dépendances
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10
 
-      # 3. Installer les dépendances
-      - name: 📦 Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
 
-      # 4. Lancer les tests
-      - name: ✅ Run tests
-        run: pytest tests/
+    # 3. ✅ Lancer les tests unitaires et d'intégration
+    - name: Run tests
+      run: pytest tests/
 
-      # 5. Construire l'image Docker
-      - name: 🐳 Build Docker image
-        run: docker build -t gradio-scoring-app .
+    # 4. 🛠 Configurer Git
+    - name: Set up Git config
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "your@email.com"
 
-      # 6. Configurer Git pour le push
-      - name: ⚙️ Setup Git config
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "Your Name"
+    # 5. 🔐 Authentification Hugging Face
+    - name: Login to Hugging Face
+      run: echo "${{ secrets.HF_TOKEN }}" | huggingface-cli login --token
 
-          git remote add hf https://$HF_TOKEN@huggingface.co/spaces/yacineould/credit-scoring-app || true
 
-          # Initialiser LFS et forcer le tracking des .pkl
-          git lfs install
-          git lfs track "*.pkl"
-          git add .gitattributes
+    # 8. 🔄 Récupérer les derniers changements de HF (évite les conflits)
+    - name: Pull from Hugging Face
+      run: |
+        git fetch hf
+        git pull hf main --rebase || echo "Aucun changement à fusionner"
 
-          # Forcer la conversion du modèle en fichier LFS
-          git rm --cached models/best_model.pkl || true
-          git add models/best_model.pkl
-
-          # Commit LFS s’il y a des modifs
-          git commit -m "✅ Track best_model.pkl via Git LFS" || echo "Rien à committer"
-
-          # Sauvegarde temporaire des changements pour permettre le pull
-          git stash
-          git pull hf main --rebase || echo "Pull skipping (peut-être vide)"
-          git stash pop || true
-
-          # Dernier commit et push
-          git add .
-          git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Rien à committer"
-          git push hf main
-      
-          
+    # 9. 🚀 Pousser le code vers Hugging Face (CD)
+    - name: Push to Hugging Face
+      run: git push hf main
