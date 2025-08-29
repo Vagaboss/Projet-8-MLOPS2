@@ -41,7 +41,11 @@ jobs:
     - name: Login to Hugging Face
       run: huggingface-cli login --token ${{ secrets.HF_TOKEN }}
 
-
+    - name: 📌 Ajouter le remote Hugging Face
+      run: |
+        git remote add hf https://huggingface.co/spaces/yacineould/credit-scoring-app || true
+        git remote -v
+        
     # 8. 🔄 Récupérer les derniers changements de HF (évite les conflits)
     - name: Pull from Hugging Face
       run: |
