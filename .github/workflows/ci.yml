@@ -25,7 +25,7 @@ jobs:
         run: pytest
 
       - name: 🤖 Login Hugging Face
-        run: echo "${{ secrets.HF_TOKEN }}" | huggingface-cli login --token
+        run: huggingface-cli login --token ${{ secrets.HF_TOKEN }}  
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
