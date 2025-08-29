@@ -37,29 +37,31 @@ jobs:
       # 6. Configurer Git pour le push
       - name: ⚙️ Setup Git config
         run: |
-          git config --global user.email "your@email.com"
+          git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
+
           git remote add hf https://$HF_TOKEN@huggingface.co/spaces/yacineould/credit-scoring-app || true
 
-          # Corriger les erreurs de fichiers LFS mal trackés
-          git lfs install --force
+          # Initialiser LFS et forcer le tracking des .pkl
+          git lfs install
           git lfs track "*.pkl"
           git add .gitattributes
 
-          # Forcer la conversion des fichiers en pointer LFS
-          git add --force models/best_model.pkl
+          # Forcer la conversion du modèle en fichier LFS
+          git rm --cached models/best_model.pkl || true
+          git add models/best_model.pkl
 
-          # Sauvegarder les changements pour permettre le pull
+          # Commit LFS s’il y a des modifs
+          git commit -m "✅ Track best_model.pkl via Git LFS" || echo "Rien à committer"
+
+          # Sauvegarde temporaire des changements pour permettre le pull
           git stash
-
-          git fetch hf main
-          git pull hf main --rebase
-
+          git pull hf main --rebase || echo "Pull skipping (peut-être vide)"
           git stash pop || true
 
+          # Dernier commit et push
           git add .
           git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Rien à committer"
-          git lfs push hf main
           git push hf main
       
           
