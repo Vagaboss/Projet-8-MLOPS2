@@ -1,3 +1,0 @@
-datasets/test_final.csv filter=lfs diff=lfs merge=lfs -text
-datasets/predictions_test_final.csv filter=lfs diff=lfs merge=lfs -text
-models/*.pkl filter=lfs diff=lfs merge=lfs -text
