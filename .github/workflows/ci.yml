@@ -1,0 +1,44 @@
+name: CI/CD - Build & Deploy Gradio App to Hugging Face
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 🔄 Checkout du code
+      uses: actions/checkout@v3
+
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: 📦 Installer les dépendances Python
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: ✅ Lancer les tests unitaires et d'intégration
+      run: pytest
+
+    - name: 🐳 Build Docker image
+      run: docker build -t gradio-scoring-app .
+
+    - name: 🚀 Déployer sur Hugging Face Spaces
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "GitHub Actions"
+        git clone https://huggingface.co/spaces/yacineould/credit-scoring-app hf-space
+        rsync -av --exclude='.git' . hf-space/
+        cd hf-space
+        git add .
+        git commit -m "🚀 Déploiement automatique via GitHub Actionss"
+        git push https://huggingface.co/${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/credit-scoring-app main
