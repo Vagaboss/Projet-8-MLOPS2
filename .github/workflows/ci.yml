@@ -41,26 +41,25 @@ jobs:
           git config --global user.name "Your Name"
           git remote add hf https://$HF_TOKEN@huggingface.co/spaces/yacineould/credit-scoring-app || true
 
-          # Sauvegarder les changements temporaires
+          # Corriger les erreurs de fichiers LFS mal trackés
+          git lfs install --force
+          git lfs track "*.pkl"
+          git add .gitattributes
+
+          # Forcer la conversion des fichiers en pointer LFS
+          git add --force models/best_model.pkl
+
+          # Sauvegarder les changements pour permettre le pull
           git stash
 
-          # Récupérer le contenu distant
           git fetch hf main
           git pull hf main --rebase
 
-          # Restaurer les changements locaux
           git stash pop || true
 
-          # Ajouter les fichiers
           git add .
-
-          # Commit s’il y a quelque chose à committer
           git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Rien à committer"
-
-          # Pousser les gros fichiers si besoin
           git lfs push hf main
-
-          # Pousser le code vers HF
           git push hf main
       
           
