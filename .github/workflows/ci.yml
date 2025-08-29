@@ -53,5 +53,9 @@ jobs:
         git pull hf main --rebase || echo "Aucun changement à fusionner"
 
     # 9. 🚀 Pousser le code vers Hugging Face (CD)
-    - name: Push to Hugging Face
-      run: git push hf main
+    - name: 🔄 Pousser le contenu vers Hugging Face
+      run: |
+        git fetch hf || true
+        git push hf main --force
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
