@@ -1,75 +1,42 @@
-name: 🧪 Tests & 🚀 Déploiement Hugging Face
+name: CI/CD HuggingFace Docker Space
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    #0. chekout complet
-    - name: 🧪 Checkout complet du dépôt
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+      - name: 🔁 Cloner le repo
+        uses: actions/checkout@v3
 
-    # 1. 📥 Récupérer le code
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
 
-    # 2. 🐍 Installer Python et dépendances
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.10"
+      - name: 📦 Installer les dépendances
+        run: pip install -r requirements.txt
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
+      - name: ✅ Lancer les tests
+        run: pytest
 
-    # 3. ✅ Lancer les tests unitaires et d'intégration
-    - name: Run tests
-      run: pytest tests/
+      - name: 🤖 Login Hugging Face
+        run: echo "${{ secrets.HF_TOKEN }}" | huggingface-cli login --token
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
-    # 4. 🛠 Configurer Git
-    - name: Set up Git config
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "your@email.com"
+      - name: 🛰️ Configurer le remote HF
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "yacineould"
+          git remote add hf https://huggingface.co/spaces/yacineould/scor-app-2 || true
+          git fetch hf || true
 
-    # 5. 🔐 Authentification Hugging Face
-    - name: Login to Hugging Face
-      run: huggingface-cli login --token ${{ secrets.HF_TOKEN }}
+      - name: 🚀 Déployer vers Hugging Face
+        run: |
+          git push hf main --force
 
-    - name: 📌 Ajouter le remote Hugging Face
-      run: |
-        git remote add hf https://huggingface.co/spaces/yacineould/credit-scoring-app || true
-        git remote -v
-        
-    # 8. 🔄 Récupérer les derniers changements de HF (évite les conflits)
-    - name: Pull from Hugging Face
-      run: |
-        git fetch hf
-        git pull hf main --rebase || echo "Aucun changement à fusionner"
-
-
-    - name: 🧑‍💻 Configurer Git avec le token HF
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git remote set-url hf https://__token__:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/credit-scoring-app
-
-
-    # 9. 🚀 Pousser le code vers Hugging Face (CD)
-    - name: 🔄 Pousser le contenu vers Hugging Face
-      run: |
-        git fetch hf || true
-        git push hf main --force
-      env:
-        HF_TOKEN: ${{ secrets.HF_TOKEN }}

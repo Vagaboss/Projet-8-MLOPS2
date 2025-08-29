@@ -12,7 +12,7 @@ COPY models/ ./models/
 COPY requirements.txt .
 
 # 4. Installer les dépendances
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m pip install --no-cache-dir -r requirements.txt
 
 # 5. Exposer le port utilisé par Gradio
 EXPOSE 7860
