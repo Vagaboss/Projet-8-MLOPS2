@@ -1,47 +1,49 @@
-name: CI/CD - Build & Deploy Gradio App to Hugging Face
+name: 🚀 CI/CD - Build, Test & Deploy to HF Spaces
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
+    branches: [main]
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔄 Checkout du code
-      uses: actions/checkout@v3
+      # 1. Récupérer le code source
+      - name: 📥 Checkout code
+        uses: actions/checkout@v3
 
-    - name: 🐍 Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+      # 2. Installer Python
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
 
-    - name: 📦 Installer les dépendances Python
-      run: |
-        pip install --upgrade pip
-        pip install -r requirements.txt
-        pip install pytest
+      # 3. Installer les dépendances
+      - name: 📦 Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest
 
-    - name: ✅ Lancer les tests unitaires et d'intégration
-      run: pytest
+      # 4. Lancer les tests
+      - name: ✅ Run tests
+        run: pytest tests/
 
-    - name: 🐳 Build Docker image
-      run: docker build -t gradio-scoring-app .
+      # 5. Construire l'image Docker
+      - name: 🐳 Build Docker image
+        run: docker build -t gradio-scoring-app .
 
-    - name: 📦 Déployer sur Hugging Face Spaces
-      run: |
-       git config --global user.email "your@email.com"
-       git config --global user.name "yourusername"
+      # 6. Configurer Git pour le push
+      - name: ⚙️ Setup Git config
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "yourusername"
 
-       # Ajouter le remote HF (s’il n’existe pas)
-       git remote add hf https://huggingface.co/spaces/yacineould/credit-scoring-app || true
-
-       # Authentifier avec le token (déjà défini dans les secrets)
-       huggingface-cli login --token "${{ secrets.HF_TOKEN }}"
-
-       # Commit + push vers HF
-       git add .
-       git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Pas de changements à commit"
-       git push hf main
+      # 7. Push vers Hugging Face Space (remote hf)
+      - name: 🚀 Push to Hugging Face Space
+        run: |
+          git remote add hf https://yacineould:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/credit-scoring-app || true
+          git add .
+          git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Pas de changements"
+          git push hf main
