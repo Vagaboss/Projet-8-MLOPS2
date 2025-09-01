@@ -39,9 +39,10 @@ jobs:
       - name: 🚀 Déployer sur Hugging Face
         run: |
           git config --global user.name "yacineould"
-          git config --global user.email "yacineouldabdel@gmail.com"
+          git config --global user.email "yacine@example.com"
           git remote add hf https://huggingface.co/spaces/yacineould/scor-app-2 || true
           git fetch hf || true
+          git fetch --unshallow || true
           git remote set-url hf https://token:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/scor-app-2
           git push hf main --force
 
