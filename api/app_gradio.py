@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import joblib, json
 from pathlib import Path
-
+from api.logger import log_prediction
 # === Constantes ===
 MODELS = Path("models")
 FEATURES_PATH = MODELS / "features.txt"
@@ -73,9 +73,15 @@ def predict_credit_score(
     X = pd.DataFrame([full_input])[all_features]
     score = model.predict_proba(X)[:, 1][0]
     prediction = int(score >= threshold)
+    
+    duration = round(time.time() - start_time, 4)  # en secondes
+    output_text = f"Score : {round(score, 4)} → " + ("❌ Risque élevé" if prediction == 1 else "✅ Faible risque")
 
-    return f"Score : {round(score, 4)} → " + ("❌ Risque élevé" if prediction == 1 else "✅ Faible risque")
+    # Logging
+    log_prediction(input_dict, output_text, duration)
 
+    return output_text
+   
 # === Interface Gradio ===
 demo = gr.Interface(
     fn=predict_credit_score,
