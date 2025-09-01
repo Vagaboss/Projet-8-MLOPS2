@@ -60,7 +60,7 @@ jobs:
 
         # Cloner ton Space Hugging Face (remplace si déjà là)
         rm -rf hf-space
-        git clone https://huggingface.co/spaces/yacineould/scor-app-2 hf-space
+        git clone https://yacineould:${HF_TOKEN}@huggingface.co/spaces/yacineould/scor-app-2 hf-space
 
         # Copier les fichiers nécessaires (tu peux adapter selon ta structure)
         cp -r api hf-space/
