@@ -1,4 +1,4 @@
-name: CI/CD HuggingFace Docker Space
+name: 🔁 CI/CD - Tests + Docker Build + HF Deploy
 
 on:
   push:
@@ -6,44 +6,71 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-test-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔁 Cloner le repo
-        uses: actions/checkout@v3
+    # 1. Checkout du code
+    - name: ⬇️ Checkout repository
+      uses: actions/checkout@v3
+      with:
+        lfs: true  # active Git LFS
 
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    # 2. Configuration de Python
+    - name: 🐍 Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      - name: 📦 Installer les dépendances
-        run: pip install -r requirements.txt
+    # 3. Installation des dépendances
+    - name: 📦 Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
 
-      - name: ✅ Lancer les tests
-        run: pytest
+    # 4. Exécution des tests
+    - name: ✅ Run tests
+      run: pytest --disable-warnings
 
-      - name: 🤖 Login Hugging Face
-        run: huggingface-cli login --token ${{ secrets.HF_TOKEN }}  
-        env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+    # 5. Build de l'image Docker
+    - name: 🐳 Build Docker image
+      run: docker build -t scoring-app .
 
-      - name: 🛰️ Configurer le remote HF
-        run: |
-          git config --global user.email "you@example.com"
-          git config --global user.name "yacineould"
-          git remote add hf https://huggingface.co/spaces/yacineould/scor-app-2 || true
-          git fetch hf || true
+    # 6. Connexion à Hugging Face (authentification via token secret)
+    - name: 🔐 Hugging Face login
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        pip install huggingface_hub
+        python -c "from huggingface_hub import login; login(token='${HF_TOKEN}', add_to_git_credential=True)"
 
-      - name: 🚀 Déployer sur Hugging Face
-        run: |
-          git config --global user.name "yacineould"
-          git config --global user.email "yacine@example.com"
-          git remote add hf https://huggingface.co/spaces/yacineould/scor-app-2 || true
-          git fetch hf || true
-          git fetch --unshallow || true
-          git remote set-url hf https://token:${{ secrets.HF_TOKEN }}@huggingface.co/spaces/yacineould/scor-app-2
-          git push hf main --force
+    # 7. Push vers Hugging Face Space
+    - name: 🚀 Deploy to Hugging Face Space
+      env:
+        HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      run: |
+        git config --global user.name "yacineould"
+        git config --global user.email "you@example.com"
+
+        # Initialiser Git LFS
+        git lfs install
+        git lfs track "*.pkl"
+        git add .gitattributes
+
+        # Cloner ton Space Hugging Face (remplace si déjà là)
+        rm -rf hf-space
+        git clone https://huggingface.co/spaces/yacineould/scor-app-2 hf-space
+
+        # Copier les fichiers nécessaires (tu peux adapter selon ta structure)
+        cp -r api hf-space/
+        cp Dockerfile hf-space/
+        cp requirements.txt hf-space/
+        cp -r models hf-space/
+
+        cd hf-space
+        git add .
+        git commit -m "🚀 Déploiement automatique via GitHub Actions" || echo "Pas de modifications à commettre"
+        git push origin main --force
 
 
