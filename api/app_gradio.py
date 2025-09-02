@@ -5,7 +5,9 @@ import pandas as pd
 import numpy as np
 import joblib, json
 from pathlib import Path
-from api.logger import log_prediction
+from logger import log_prediction
+from datetime import datetime, timezone
+import time
 # === Constantes ===
 MODELS = Path("models")
 FEATURES_PATH = MODELS / "features.txt"
@@ -51,6 +53,7 @@ def predict_credit_score(
     OVERDUE
 ):
     # Dictionnaire des inputs
+    start_time = time.time()
     input_dict = {
         "EXT_SOURCE_2": EXT_SOURCE_2,
         "EXT_SOURCE_3": EXT_SOURCE_3,
