@@ -2,7 +2,7 @@ import json
 import pandas as pd
 from datetime import datetime
 from pathlib import Path
-from evidently.report import Report
+from evidently import Report
 from evidently.metrics import DataDriftPreset, DataQualityPreset
 from evidently.test_suite import TestSuite
 from evidently.test_preset import DataStabilityTestPreset
