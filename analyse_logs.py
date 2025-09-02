@@ -1,48 +1,65 @@
 import json
 import pandas as pd
-from datetime import datetime
-from pathlib import Path
 from evidently import Report
-from evidently.metrics import DataDriftPreset, DataQualityPreset
-from evidently.test_suite import TestSuite
-from evidently.test_preset import DataStabilityTestPreset
+from evidently.presets import DataDriftPreset
 
-# === Fichiers ===
+# === Chemins ===
 LOG_PATH = "logs/predictions_log.jsonl"
 REFERENCE_PATH = "datasets/train_final.csv"
 REPORT_PATH = "logs/drift_report.html"
-TESTSUITE_PATH = "logs/tests_report.html"
 
 # === Chargement des données ===
 
-# Charger les données de référence
+# Données de référence
 df_ref = pd.read_csv(REFERENCE_PATH)
 
-# Charger les données de production (logs)
+# === Partie 1 : Lecture complète
 records = []
 with open(LOG_PATH, "r") as f:
     for line in f:
         log = json.loads(line)
-        input_data = log["input"]
-        records.append(input_data)
+        row = log.get("input", {})
+        row["duration"] = log.get("duration", None)
+        row["prediction"] = log.get("prediction", None)
+        records.append(row)
 
-df_prod = pd.DataFrame(records)
+# DataFrame complet
+df_full = pd.DataFrame(records)
 
-# === Générer le rapport de dérive ===
+# Sélectionner uniquement les colonnes communes pour la dérive
+common_cols = [col for col in df_ref.columns if col in df_full.columns]
+df_ref_filtered = df_ref[common_cols]
+df_prod_filtered = df_full[common_cols]
 
-report = Report(metrics=[
-    DataDriftPreset(),
-    DataQualityPreset()
-])
-report.run(reference_data=df_ref, current_data=df_prod)
-report.save_html(REPORT_PATH)
+# === Analyse du drift
+report = Report([DataDriftPreset(method="psi")])
+evaluation = report.run(reference_data=df_ref_filtered, current_data=df_prod_filtered)
+evaluation.save_html(REPORT_PATH)
+print(f"✅ Rapport de dérive généré : {REPORT_PATH}")
 
-# === Générer la suite de tests Evidently ===
+# === Analyse de la latence et des erreurs (avec toutes les colonnes)
+durations = df_full["duration"].astype(float)
 
-tests = TestSuite(tests=[
-    DataStabilityTestPreset()
-])
-tests.run(reference_data=df_ref, current_data=df_prod)
-tests.save_html(TESTSUITE_PATH)
+latence_moyenne = durations.mean()
+latence_max = durations.max()
+latence_seuil = durations.quantile(0.95)
+requêtes_lentes = durations[durations > latence_seuil]
+pourcentage_lentes = 100 * len(requêtes_lentes) / len(durations)
 
-print(f"✅ Analyse terminée. Rapport enregistré : {REPORT_PATH} & {TESTSUITE_PATH}")
+df_full["prediction"] = df_full["prediction"].astype(str)
+taux_erreur = 100 * df_full["prediction"].isin(["", "None", "nan"]).sum() / len(df_full)
+
+print("\n=== Analyse des performances opérationnelles ===")
+print(f"🔁 Nombre total de requêtes : {len(df_full)}")
+print(f"⚠️ Taux d’erreur : {taux_erreur:.2f} %")
+print(f"🐢 Latence moyenne : {latence_moyenne:.3f} secondes")
+print(f"⏱️ Latence maximale : {latence_max:.3f} secondes")
+print(f"🐌 Requêtes lentes (> 95e percentile) : {pourcentage_lentes:.1f} % des requêtes")
+
+
+
+
+
+
+
+
