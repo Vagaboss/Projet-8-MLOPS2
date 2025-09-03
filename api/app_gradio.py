@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import joblib, json
 from pathlib import Path
-from logger import log_prediction
+from api.logger import log_prediction
 from datetime import datetime, timezone
 import time
 # === Constantes ===
