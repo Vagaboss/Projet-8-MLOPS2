@@ -17,5 +17,8 @@ RUN python -m pip install --no-cache-dir -r requirements.txt
 # 5. Exposer le port utilisé par Gradio
 EXPOSE 7860
 
+
+ENV PYTHONPATH="${PYTHONPATH}:/app"
+
 # 6. Commande pour démarrer Gradio
 CMD ["python", "api/app_gradio.py"]
