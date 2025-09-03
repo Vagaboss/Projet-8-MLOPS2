@@ -7,7 +7,7 @@ FROM python:3.10-slim
 WORKDIR /app
 
 # 3. Copier les fichiers nécessaires
-COPY api/app_gradio.py ./api/app_gradio.py
+COPY api/ ./api/
 COPY models/ ./models/
 COPY requirements.txt .
 
