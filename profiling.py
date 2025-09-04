@@ -5,13 +5,13 @@ from api.app_gradio import predict_credit_score
 
 # === Dummy inputs pour simuler une requête API ===
 args = (
-    0.5, 0.6, 0.4,  # EXT_SOURCEs
+    0.5, 0.9, 0.4,  # EXT_SOURCEs
     True, True,     # Éducation
     12,             # ATM_DRAWINGS
     True,           # Working
     True, False,    # Genre
     True,           # Doc3
-    1000            # OVERDUE
+    10000            # OVERDUE
 )
 
 # === Profiling et sauvegarde du résultat pour SnakeViz ===
