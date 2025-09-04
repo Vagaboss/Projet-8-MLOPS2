@@ -56,6 +56,20 @@ print(f"🐢 Latence moyenne : {latence_moyenne:.3f} secondes")
 print(f"⏱️ Latence maximale : {latence_max:.3f} secondes")
 print(f"🐌 Requêtes lentes (> 95e percentile) : {pourcentage_lentes:.1f} % des requêtes")
 
+# CPU
+if "cpu_percent" in df_full.columns:
+    df_full["cpu_percent"] = df_full["cpu_percent"].astype(float)
+    cpu_moyenne = df_full["cpu_percent"].mean()
+    cpu_max = df_full["cpu_percent"].max()
+    print(f"🧠 CPU moyen : {cpu_moyenne:.2f} % | max : {cpu_max:.2f} %")
+
+# RAM
+if "memory_used_mb" in df_full.columns:
+    df_full["memory_used_mb"] = df_full["memory_used_mb"].astype(float)
+    ram_moyenne = df_full["memory_used_mb"].mean()
+    ram_max = df_full["memory_used_mb"].max()
+    print(f"💾 RAM moyenne : {ram_moyenne:.2f} MB | max : {ram_max:.2f} MB")
+
 
 
 

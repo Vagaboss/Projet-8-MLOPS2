@@ -9,12 +9,14 @@ LOG_FILE = "logs/predictions_log.jsonl"
 # S'assurer que le dossier existe
 os.makedirs(os.path.dirname(LOG_FILE), exist_ok=True)
 
-def log_prediction(input_data, prediction, duration):
+def log_prediction(input_data, prediction, duration, cpu=None, memory=None):
     log_entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "input": input_data,
         "prediction": prediction,
-        "duration": duration  # en secondes
+        "duration": duration,  # en secondes
+        "cpu_percent": cpu,
+        "memory_usage_MB": memory
     }
 
     with open(LOG_FILE, "a") as f:

@@ -19,6 +19,8 @@ with open(LOG_PATH, "r") as f:
         row = log.get("input", {})
         row["duration"] = log.get("duration", None)
         row["prediction"] = log.get("prediction", None)
+        row["cpu_percent"] = log.get("cpu_percent", None)
+        row["memory_usage_MB"] = log.get("memory_usage_MB", None)
         records.append(row)
 
 df = pd.DataFrame(records)
@@ -40,6 +42,23 @@ if "prediction" in df.columns:
     st.metric("⚠️ Taux d’erreur", f"{round(100 * erreurs / len(df), 2)} %")
 else:
     st.warning("⚠️ Colonne 'prediction' absente des logs.")
+
+# === Statistiques CPU et RAM ===
+st.header("🖥️ Utilisation CPU & RAM")
+
+if "cpu_percent" in df.columns:
+    cpu_vals = df["cpu_percent"].astype(float)
+    st.metric("🧠 CPU moyen (%)", f"{cpu_vals.mean():.2f}")
+    st.metric("📈 CPU max (%)", f"{cpu_vals.max():.2f}")
+else:
+    st.warning("⚠️ Colonne 'cpu_percent' absente des logs.")
+
+if "memory_usage_MB" in df.columns:
+    ram_vals = df["memory_usage_MB"].astype(float)
+    st.metric("💾 RAM moyenne (MB)", f"{ram_vals.mean():.2f}")
+    st.metric("📈 RAM max (MB)", f"{ram_vals.max():.2f}")
+else:
+    st.warning("⚠️ Colonne 'memory_usage_MB' absente des logs.")
 
 # === Rapport de dérive (Data Drift) ===
 st.header("🔍 Rapport de dérive (Data Drift)")

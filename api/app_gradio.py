@@ -8,6 +8,8 @@ from pathlib import Path
 from api.logger import log_prediction
 from datetime import datetime, timezone
 import time
+import psutil
+
 # === Constantes ===
 MODELS = Path("models")
 FEATURES_PATH = MODELS / "features.txt"
@@ -78,10 +80,12 @@ def predict_credit_score(
     prediction = int(score >= threshold)
     
     duration = round(time.time() - start_time, 4)  # en secondes
+    cpu = psutil.cpu_percent(interval=None)
+    memory = psutil.Process().memory_info().rss / (1024 * 1024)  # en Mo
     output_text = f"Score : {round(score, 4)} → " + ("❌ Risque élevé" if prediction == 1 else "✅ Faible risque")
 
     # Logging
-    log_prediction(input_dict, output_text, duration)
+    log_prediction(input_dict, output_text, duration, cpu=cpu, memory=memory)
 
     return output_text
    

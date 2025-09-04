@@ -12,3 +12,4 @@ pytest
 gradio
 pathlib
 docker
+psutil
