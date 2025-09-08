@@ -41,21 +41,15 @@ selected_features = [
 ]
 
 # === Fonction d'inférence ===
-def predict_credit_score(
-    EXT_SOURCE_2,
-    EXT_SOURCE_3,
-    EXT_SOURCE_1,
-    NAME_EDUCATION_TYPE_Higher,
-    NAME_EDUCATION_TYPE_Secondary,
-    ATM_DRAWINGS,
-    WORKING,
-    GENDER_F,
-    GENDER_M,
-    DOC3,
-    OVERDUE
-):
+
     # Dictionnaire des inputs
+def predict_credit_score(
+    EXT_SOURCE_2, EXT_SOURCE_3, EXT_SOURCE_1,
+    NAME_EDUCATION_TYPE_Higher, NAME_EDUCATION_TYPE_Secondary,
+    ATM_DRAWINGS, WORKING, GENDER_F, GENDER_M, DOC3, OVERDUE
+):
     start_time = time.time()
+
     input_dict = {
         "EXT_SOURCE_2": EXT_SOURCE_2,
         "EXT_SOURCE_3": EXT_SOURCE_3,
@@ -70,24 +64,28 @@ def predict_credit_score(
         "BUREAU_AMT_CREDIT_SUM_OVERDUE_max": OVERDUE
     }
 
-    # Remplir les autres features avec 0
-    full_input = {col: 0 for col in all_features}
-    full_input.update(input_dict)
+    # === Optimisation NumPy ===
+    X_np = np.zeros((1, len(all_features)), dtype=np.float32)
+    for key, value in input_dict.items():
+        if key in all_features:
+            idx = all_features.index(key)
+            X_np[0, idx] = value
 
-    # Création du DataFrame
-    X = pd.DataFrame([full_input])[all_features]
-    score = model.predict_proba(X)[:, 1][0]
+    # === Prédiction
+    score = model.predict_proba(X_np)[0, 1]
     prediction = int(score >= threshold)
-    
-    duration = round(time.time() - start_time, 4)  # en secondes
+
+    duration = round(time.time() - start_time, 4)
     cpu = psutil.cpu_percent(interval=None)
     memory = psutil.Process().memory_info().rss / (1024 * 1024)  # en Mo
+
     output_text = f"Score : {round(score, 4)} → " + ("❌ Risque élevé" if prediction == 1 else "✅ Faible risque")
 
-    # Logging
     log_prediction(input_dict, output_text, duration, cpu=cpu, memory=memory)
 
     return output_text
+
+
    
 # === Interface Gradio ===
 demo = gr.Interface(
