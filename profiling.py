@@ -23,8 +23,8 @@ predict_credit_score(*args)
 profiler.disable()
 
 # Sauvegarde dans un fichier pour SnakeViz
-profiler.dump_stats("profiling_output.prof")
-print("✅ Fichier 'profiling_output.prof' généré pour visualisation SnakeViz.")
+profiler.dump_stats("profiling_output3.prof")
+print("✅ Fichier 'profiling_output3.prof' généré pour visualisation SnakeViz.")
 
 # Affichage textuel optionnel dans le terminal
 s = io.StringIO()
