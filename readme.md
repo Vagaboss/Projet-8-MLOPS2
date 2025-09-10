@@ -36,13 +36,13 @@ Le projet est organisé de manière modulaire afin de séparer les différentes 
 
 - analyse_logs.py : Analyse et agrégation des logs (logs/predictions.log).
 
-- dashboard.py : Script pour créer une visualisation ou un dashboard à partir des données de logs.
+- dashboard.py : Script pour créer un dashboard avec streamlit à partir des données de logs.
 
 - requirements.txt : Liste des dépendances Python à installer.
 
 - Dockerfile : Conteneurisation du projet pour un déploiement facile.
 
-- README.md : Documentation principale du projet (actuellement vide).
+- README.md : Documentation principale du projet .
 
 - .gitignore, .gitattributes : Fichiers de configuration Git.
 
@@ -65,7 +65,7 @@ Créer une interface utilisateur (UI) à l’aide de Gradio pour permettre à un
 
 Conteneuriser cette application avec Docker pour garantir un déploiement portable et reproductible.
 
-Automatiser le déploiement via une pipeline CI/CD GitHub Actions qui build, teste et déploie automatiquement l’application dès qu’une modification est poussée.
+Automatiser le déploiement via une pipeline CI/CD GitHub Actions qui build, teste et déploie automatiquement l’application sur hugging face dès qu’une modification est poussée sur la branche main.
 
 ⚙️ Fonctionnement général
 
@@ -82,6 +82,8 @@ Applique model.predict_proba() pour générer un score
 Traduit ce score en prédiction binaire selon un seuil
 
 Retourne le résultat dans une interface simple via Gradio
+
+# lancement : python -m api.app_gradio.py
 
 ✅ L’interface Gradio s’ouvre dans un navigateur à l’adresse : http://localhost:7860
 
@@ -108,28 +110,28 @@ Le dossier .github/workflows/ contient le fichier YAML de configuration pour Git
 
 - Installe les dépendances
 
-- Exécute les tests unitaires (s’il y en a dans le dossier tests/)
+- Exécute les tests 
 
 - Build l’image Docker et déployer sur Hugging Face Spaces 
 
 # pip install -r requirements.txt
 
-# python app_gradio.py
+# python - m app_gradio.py
 
 📁 Fichiers importants
 
 Fichier / Dossier	Rôle
-app_gradio.py	L’API Gradio exposant le modèle
-models/best_model.pkl	Modèle XGBoost sauvegardé
-models/features.txt	Liste ordonnée des colonnes attendues par le modèle
-models/threshold.json	Seuil de classification binaire
-Dockerfile	Instructions pour créer l’image Docker
-.github/workflows/	Contient la configuration CI/CD
-logs/	Stocke les prédictions faites via l’API
+- app_gradio.py	L’API Gradio exposant le modèle
+- models/best_model.pkl	Modèle XGBoost sauvegardé
+- models/features.txt	Liste ordonnée des colonnes attendues par le modèle
+- models/threshold.json	Seuil de classification binaire
+- Dockerfile	Instructions pour créer l’image Docker
+- .github/workflows/	Contient la configuration CI/CD
+- logs/	Stocke les prédictions faites via l’API
 
 🧪 Logs & Monitoring
 
-La fonction log_prediction() enregistre chaque appel à l’API dans le fichier predictions_log.jsonl avec :
+La fonction log_prediction() définit dans le fichier api/logger.py enregistre chaque appel à l’API dans le fichier predictions_log.jsonl avec :
 
 - Entrées utilisateur
 
@@ -139,7 +141,7 @@ La fonction log_prediction() enregistre chaque appel à l’API dans le fichier 
 
 - Utilisation CPU et RAM
 
-Ces logs peuvent ensuite être analysés via analyse_logs.py ou visualisés dans un dashboard.py.
+Ces logs peuvent ensuite être analysés via le fichier analyse_logs.py ou visualisés dans un dashboard.py.
 
 ✅ Tests réalisés
 
@@ -184,11 +186,12 @@ Permet d’identifier les fonctions les plus lentes (ex : to_numpy, isna)
 
 📉 Mesures de :
 
-Temps d’exécution
+- Temps d’exécution
 
-% CPU utilisé
+- % CPU utilisé
 
-Mémoire RAM consommée
+- Mémoire RAM consommée
+
 Ces données sont loggées automatiquement dans chaque appel.
 
 🔁 4. Tests d'intégration (API + Docker)
@@ -203,7 +206,7 @@ Les fichiers modèles et logs sont bien montés et accessibles
 
 ⚙️ Tests sur la CI/CD :
 
-À chaque push vers repo distant github, la pipeline GitHub Actions installe les dépendances, lance des tests (ou checks de syntaxe / formatage) et peut effectuer un build Docker avant deploiement sur hugging face.
+- À chaque push vers repo distant github, la pipeline GitHub Actions installe les dépendances, lance des tests (ou checks de syntaxe / formatage) et peut effectuer un build Docker avant deploiement sur hugging face.
 
 Cela permet de détecter rapidement les régressions ou erreurs d'importation.
 
@@ -232,13 +235,13 @@ Une hausse du taux d’erreur ou des scores inhabituels
 
 À chaque appel de l’API, un log JSON est généré, contenant :
 
-Clé	Description
+<Clé	Description
 timestamp	Date et heure UTC de la requête
 input	Données saisies par l'utilisateur
 prediction	Score + étiquette de risque
 duration	Temps de réponse (en secondes)
 cpu_percent	Utilisation CPU au moment de la prédiction
-memory_usage_MB	Mémoire RAM utilisée (en mégaoctets)
+memory_usage_MB	Mémoire RAM utilisée (en mégaoctets)>
 
 Tous les logs sont stockés dans un fichier local : logs/predictions.log
 
@@ -252,6 +255,8 @@ Un script Python analyse_logs.py a été développé pour :
 Chargement des lignes JSON du fichier logs/predictions.log
 
 Conversion en DataFrame pour une analyse plus simple
+
+# lancement : python analyse_logs.py
 
 📊 Calculer les statistiques clés :
 
@@ -278,11 +283,13 @@ Surconsommation CPU / RAM : si cpu_percent ou memory_usage_MB dépasse un seuil 
 
 Un dashboard dashboard.py avec Streamlit  :
 
-Afficher les  temps de réponse, CPU, mémoire
+- Afficher les  temps de réponse, CPU, mémoire
 
-Suivre en temps réel la distribution des scores
+- Suivre en temps réel la distribution des scores
 
-Détecter visuellement les anomalies
+- Détecter visuellement les anomalies
+
+# lancement : streamlit run dashboard.py
 
 
 Étape 4 – Optimisation des performances du modèle en production
@@ -304,11 +311,11 @@ Un profiling de la fonction predict_credit_score() exposée dans app_gradio.py a
 
 Exemple de lancement depuis le terminal :
 
-python profile_api.py
+# python profiling.py
 
 Les résultats sont sauvegardés au format .prof et visualisés via Snakeviz :
 
-snakeviz logs/profile_predict.prof
+# snakeviz profiling_output3.prof
 
 Le premier profilage a révélé que la ligne suivante était un goulot d’étranglement :
 
@@ -332,14 +339,7 @@ Grâce à cette optimisation, le temps d’inférence est passé d’environ 0.0
 
 b) Conversion ONNX
 
-Nous avons converti le modèle XGBoost .pkl en ONNX avec la bibliothèque onnxmltools, dans le fichier convert_to_onnx.py. Le modèle est ensuite testé avec onnxruntime.InferenceSession pour l'inférence. Le code de chargement ressemble à :
-
-session = onnxruntime.InferenceSession("models/best_model.onnx", providers=["CPUExecutionProvider"])
-
-Puis pour l'inférence :
-
-inputs = {session.get_inputs()[0].name: X.astype(np.float32).values}
-probas = session.run(None, inputs)[0].ravel()
+Nous avons converti le modèle XGBoost .pkl en ONNX avec la bibliothèque onnxmltools, dans le fichier convert_to_onnx.py. Le modèle est ensuite testé avec onnxruntime.InferenceSession pour l'inférence. 
 
 Cela est visible à la fin de mon notebook principal : dupli.ipynb dans le dossier notebook
 
@@ -348,13 +348,13 @@ Cela est visible à la fin de mon notebook principal : dupli.ipynb dans le dossi
 
 L’API optimisée (app_gradio.py) a été committée dans le dépôt GitHub. Le pipeline CI/CD défini dans .github/workflows/deploy.yml permet de :
 
-Exécuter les tests,
+- Exécuter les tests,
 
-Construire l’image Docker à jour,
+- Construire l’image Docker à jour,
 
-Déployer automatiquement l’API.
+- Déployer automatiquement l’API.
 
-Chaque mise à jour du code déclenche une reconstruction complète.
+- Chaque mise à jour du code déclenche une reconstruction complète.
 
 5. Résultats des optimisations
 
@@ -440,6 +440,10 @@ Accessible sur : http://localhost:7860
 
 ---
 
+### 🖼️ DASHBOARD
+
+streamlit run dashboard.py
+
 ### 🐳 DOCKER
 
 Build de l’image Docker :
@@ -462,10 +466,7 @@ Fichier : .github/workflows/deploy.yml
 Analyser les logs :
 python analyse_logs.py
 
-Lancer le dashboard (optionnel) :
-streamlit run dashboard.py
 
----
 
 
 
@@ -476,7 +477,6 @@ streamlit run dashboard.py
 - app_gradio.py : API Gradio
 - profiling.py : Profiling de l’inférence
 - analyse_logs.py : Analyse automatique des logs
-- convert_to_onnx.py : Conversion du modèle
 - dashboard.py : Dashboard de monitoring
 - Dockerfile : Conteneurisation
 - requirements.txt : Dépendances
