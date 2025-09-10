@@ -433,7 +433,8 @@ snakeviz profiling_output3.prof
 ### 🖼️ INTERFACE GRADIO
 
 Lancer l’interface Gradio :
-python app_gradio.py
+
+python -m api.app_gradio.py
 
 Accessible sur : http://localhost:7860
 
