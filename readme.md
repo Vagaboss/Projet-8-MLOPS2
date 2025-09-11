@@ -46,7 +46,7 @@ Reçoit des entrées utilisateur (11 features sélectionnées)
 
 Retourne le résultat dans une interface simple via Gradio
 
-### lancement : python -m api.app_gradio.py
+### lancement : python -m api.app_gradio
 
 ✅ L’interface Gradio s’ouvre dans un navigateur à l’adresse : http://localhost:7860
 
