@@ -73,9 +73,6 @@ Le dossier .github/workflows/ contient le fichier YAML de configuration pour Git
 
 - Build l’image Docker et déployer sur Hugging Face Spaces 
 
-# pip install -r requirements.txt
-
-# python - m app_gradio.py
 
 🧪 Logs & Monitoring
 
@@ -93,32 +90,9 @@ Ces logs peuvent ensuite être analysés via le fichier analyse_logs.py ou visua
 
 ✅ Tests réalisés
 
-Pour garantir le bon fonctionnement, la stabilité et les performances de l’API, plusieurs types de tests ont été mis en place tout au long de l’étape 2 :
+Pour garantir le bon fonctionnement, la stabilité et les performances de l’API, plusieurs types de tests ont été mis en place tout au long de l’étape 2 
 
-🧪 1. Tests fonctionnels
-
-Ces tests permettent de s'assurer que l'API Gradio retourne une prédiction correcte selon les entrées fournies par l'utilisateur 
-
-🧠 2. Tests techniques / unitaires
-
-🔎 Test de bon chargement des artefacts 
-
-🔎 Test de complétion automatique des features 
-
-🔎 Test de logging 
-
-
-⚙️ 3. Tests de performance
-
-Pour optimiser l'inférence et détecter des goulots d’étranglement :
-
-⏱️ Profiling de la fonction predict_credit_score() à l’aide de cProfile + snakeviz.
-
-
-🔁 4. Tests d'intégration (API + Docker)
-
-🐳 Vérification que l’API Gradio fonctionne bien dans le conteneur Docker 
-
+- => Les tests visibles dans le sous dossier tests
 
 - => Rapport de couverture des tests dans le dossier /htmlcov
 
@@ -186,86 +160,4 @@ Les résultats sont sauvegardés au format .prof et visualisés via Snakeviz :
 # snakeviz profiling_output3.prof
 
 
-
-
-
-#### Commandes terminales importantes
-
-# 🧠 Credit Scoring API – Projet MLOps
-
-
-### ⚙️ ENVIRONNEMENT & DÉPENDANCES
-
-Installation des dépendances :
-pip install -r requirements.txt
-
-
-### 🧠 ENTRAÎNEMENT DU MODÈLE
-
-Lancer le script d'entraînement :
-python train.py
-
----
-
-### 🔍 INFÉRENCE EN LOCAL
-
-Lancer l’inférence sur un jeu de test :
-python inference.py
-
----
-
-### 🧪 TESTS UNITAIRES & COUVERTURE
-
-Exécuter les tests avec coverage :
-pytest --cov=api tests/
-
-Générer un rapport HTML :
-pytest --cov=api --cov-report=html
-
-
-### 📈 PROFILING & GOULOTS D'ÉTRANGLEMENT
-
-Lancer le profiling :
-python profiling.py
-
-Visualiser les résultats :
-snakeviz profiling_output3.prof
-
----
-
-### 🖼️ INTERFACE GRADIO
-
-Lancer l’interface Gradio :
-
-python -m api.app_gradio.py
-
-Accessible sur : http://localhost:7860
-
----
-
-### 🖼️ DASHBOARD
-
-streamlit run dashboard.py
-
-### 🐳 DOCKER
-
-Build de l’image Docker :
-docker build -t credit-risk-api .
-
-Exécuter l’image Docker :
-docker run -p 7860:7860 credit-risk-api
-
----
-
-### 🤖 CI/CD – GITHUB ACTIONS
-
-Déclenché automatiquement à chaque push.
-Fichier : .github/workflows/deploy.yml
-
----
-
-### 📊 MONITORING & ANALYSE DES LOGS
-
-Analyser les logs :
-python analyse_logs.py
 
