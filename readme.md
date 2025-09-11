@@ -3,22 +3,18 @@
 🗂️ Structure du projet
 
 Projet 8 MLOPS2/
-│
+
 ├── .git/                           
 ├── .github/                        
-│
-│
 ├── api/                          
 ├── datasets/                     
 ├── htmlcov/                       
 ├── logs/                         
 ├── models/                        
 ├── notebook/                       
-├── tests/                          
-│
+├── tests/                       
 ├── .gitattributes               
 ├── .gitignore                      
-│
 ├── analyse_logs.py                 
 ├── dashboard.py                    
 ├── Dockerfile                      
