@@ -4,31 +4,31 @@
 
 Projet 8 MLOPS2/
 │
-├── .git/                           # Dossier Git local
-├── .github/                        # Configuration GitHub Actions (CI/CD)
+├── .git/                           
+├── .github/                        
 │
 │
-├── api/                            # Code de l’API Gradio (logger, predict)
-├── datasets/                       # Fichiers de données d'entraînement/test
-├── htmlcov/                        # Rapport HTML de couverture de test (pytest-cov)
-├── logs/                           # Fichier .jsonl des logs de prédictions
-├── models/                         # Modèles sauvegardés (.pkl, .onnx, .json, etc.)
-├── notebook/                       # Notebooks d'exploration et tests
-├── tests/                          # Tests automatisés (Pytest)
+├── api/                          
+├── datasets/                     
+├── htmlcov/                       
+├── logs/                         
+├── models/                        
+├── notebook/                       
+├── tests/                          
 │
-├── .gitattributes                  # Fichier Git
-├── .gitignore                      # Fichier Git d’exclusion
+├── .gitattributes               
+├── .gitignore                      
 │
-├── analyse_logs.py                 # Analyse des logs JSONL (durée, CPU, drift…)
-├── dashboard.py                    # Dashboard (Streamlit ou Gradio)
-├── Dockerfile                      # Fichier de conteneurisation Docker
-├── inference.py                    # Inférence batch sur un dataset
-├── profiling.py                    # Profiling de la fonction predict
-├── profiling_output.prof           # Résultat 1 du profiling
-├── profiling_output3.prof          # Résultat 2 du profiling
-├── readme.md                       # Documentation principale du projet
-├── requirements.txt                # Dépendances du projet
-└── train.py                        # Script d'entraînement du modèle
+├── analyse_logs.py                 
+├── dashboard.py                    
+├── Dockerfile                      
+├── inference.py                  
+├── profiling.py                    
+├── profiling_output.prof           
+├── profiling_output3.prof          
+├── readme.md                       
+├── requirements.txt                
+└── train.py                       
 
 
 
@@ -50,7 +50,7 @@ Reçoit des entrées utilisateur (11 features sélectionnées)
 
 Retourne le résultat dans une interface simple via Gradio
 
-# lancement : python -m api.app_gradio.py
+## lancement : python -m api.app_gradio.py
 
 ✅ L’interface Gradio s’ouvre dans un navigateur à l’adresse : http://localhost:7860
 
@@ -113,7 +113,7 @@ Chargement des lignes JSON du fichier logs/predictions.log
 
 Conversion en DataFrame pour une analyse plus simple
 
-# lancement : python analyse_logs.py
+## lancement : python analyse_logs.py
 
 📊 Calculer les statistiques clés :
 
@@ -141,7 +141,7 @@ Un dashboard.py avec Streamlit  :
 
 - Détecter visuellement les anomalies
 
-# lancement : streamlit run dashboard.py
+## lancement : streamlit run dashboard.py
 
 
 #  Étape 4 – Optimisation des performances du modèle en production
@@ -153,11 +153,11 @@ Un profiling de la fonction predict_credit_score() exposée dans app_gradio.py a
 
 Exemple de lancement depuis le terminal :
 
-# python profiling.py
+## python profiling.py
 
 Les résultats sont sauvegardés au format .prof et visualisés via Snakeviz :
 
-# snakeviz profiling_output3.prof
+## snakeviz profiling_output3.prof
 
 
 
