@@ -1,3 +1,8 @@
+Lien github du projet : https://github.com/Vagaboss/Projet-8-MLOPS2
+
+Projet effectué en 4 étapes.
+
+
 #  Etape 1 
 
 🗂️ Structure du projet
@@ -91,6 +96,8 @@ Pour garantir le bon fonctionnement, la stabilité et les performances de l’AP
 - => Les tests visibles dans le sous dossier tests
 
 - => Rapport de couverture des tests dans le dossier /htmlcov
+
+### lancement des tests : pytest -v tests/
 
 
 #  Étape 3 – Monitoring et détection d’anomalies
