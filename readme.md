@@ -1,6 +1,6 @@
 Lien github du projet : https://github.com/Vagaboss/Projet-8-MLOPS2
 
-Projet effectué en 4 étapes..
+Projet effectué en 4 étapes.
 
 # IMPORTANT
 Fichiers datasets volumineux à telecharger ici : 
